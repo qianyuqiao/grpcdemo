@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package routeguide;
+
+service RouteGuide {
+
+  // 检查服务可用性 正常情况下会返回字符串 pong
+  rpc Ping (PingRequest) returns (PingReply) {
+  }
+}
+
+// 0.Ping request
+message PingRequest {
+}
+
+// 0.Ping reply
+message PingReply {
+  string reply = 1;
+}
