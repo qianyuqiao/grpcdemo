@@ -33,6 +33,8 @@ func UnaryClientInterceptor(ctx context.Context, method string, req, reply inter
 
 		var remoteServer string
 		if p.Addr != nil {
+			// 通过peer在拦截器里拿到请求对应的远端服务器的IP和端口号
+			// 对通过服务发现连接服务器的客户端的调试和记录非常有用。
 			remoteServer=p.Addr.String()
 		}
 
@@ -45,7 +47,7 @@ func UnaryClientInterceptor(ctx context.Context, method string, req, reply inter
 
 func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 	remote, _ := peer.FromContext(ctx)
-	remoteAddr := remote.Addr.String()
+	remoteAddr := remote.Addr.String() // 拿到远端发起请求的客户端的IP和端口号
 
 	in, _ := json.Marshal(req)
 	inStr := string(in)
