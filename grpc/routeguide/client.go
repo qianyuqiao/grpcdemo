@@ -2,6 +2,7 @@ package routeguide
 
 import (
 	"context"
+	"example.com/grpcdemo/config"
 	"example.com/grpcdemo/grpc/common"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
@@ -19,6 +20,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	config.Mode = config.ModeQa
 
 }
 
