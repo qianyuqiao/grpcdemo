@@ -3,9 +3,9 @@ package common
 import (
 	"context"
 	"encoding/json"
+	"example.com/grpcdemo/utils/dlog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
-	"log"
 	"time"
 )
 
@@ -38,7 +38,7 @@ func UnaryClientInterceptor(ctx context.Context, method string, req, reply inter
 			remoteServer=p.Addr.String()
 		}
 
-		log.Println("grpc", method, "in", inStr, "out", outStr, "err", err, "duration/ms", duration, "remote_server", remoteServer)
+		dlog.Info("grpc", method, "in", inStr, "out", outStr, "err", err, "duration/ms", duration, "remote_server", remoteServer)
 
 	}()
 
@@ -51,7 +51,7 @@ func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.Una
 
 	in, _ := json.Marshal(req)
 	inStr := string(in)
-	log.Println("ip", remoteAddr, "grpc_access_start", info.FullMethod, "in", inStr)
+	dlog.Info("ip", remoteAddr, "grpc_access_start", info.FullMethod, "in", inStr)
 
 	start := time.Now()
 	defer func() {
@@ -59,9 +59,9 @@ func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.Una
 		outStr := string(out)
 		duration := int64(time.Since(start) / time.Millisecond)
 		if duration >= 500 {
-			log.Println("ip", remoteAddr, "grpc_access_end", info.FullMethod, "in", inStr, "out", outStr, "err", err, "duration/ms", duration)
+			dlog.Info("ip", remoteAddr, "grpc_access_end", info.FullMethod, "in", inStr, "out", outStr, "err", err, "duration/ms", duration)
 		} else {
-			log.Println("ip", remoteAddr, "grpc_access_end", info.FullMethod, "in", inStr, "out", outStr, "err", err, "duration/ms", duration)
+			dlog.Info("ip", remoteAddr, "grpc_access_end", info.FullMethod, "in", inStr, "out", outStr, "err", err, "duration/ms", duration)
 		}
 	}()
 
