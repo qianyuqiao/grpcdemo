@@ -27,13 +27,13 @@ func main() {
 
 	errChan := make(chan error)
 	stopChan := make(chan os.Signal)
-
 	// bind OS events to the signal channel
 	signal.Notify(stopChan, syscall.SIGTERM, syscall.SIGINT)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
+		panic(err)
 	}
 	s := grpc.NewServer(grpc.UnaryInterceptor(common.UnaryServerInterceptor))
 	routeguide.RegisterRouteGuideServer(s, app.NewServer())

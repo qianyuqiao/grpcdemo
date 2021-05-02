@@ -1,7 +1,6 @@
 package gls
 
 import (
-	"fmt"
 	"github.com/jtolds/gls"
 )
 
@@ -25,7 +24,6 @@ func GetTraceInfo() (traceID string, pSpanID string, spanID string) {
 		pSpanID = pSpan.(string)
 	}
 	span, ok := mgr.GetValue(spanIDKey)
-	fmt.Println(span)
 	if ok {
 		spanID = span.(string)
 	}

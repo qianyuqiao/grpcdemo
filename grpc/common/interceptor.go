@@ -25,6 +25,18 @@ func UnaryClientInterceptor(ctx context.Context, method string, req, reply inter
 
 	// start tracing
 	traceID, _, spanID := gls.GetTraceInfo()
+	if spanID == "" {
+		spanID = utils.GenerateSpanID(utils.GetLocalIP().String())
+	}
+	gls.SetGls(traceID, "", spanID, func() { // make sure client request log contain spanId for tracing
+		err = _UnaryClientInterceptor(ctx, method, req, reply, cc, invoker, opts...)
+	})
+
+	return
+}
+
+func _UnaryClientInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) (err error) {
+	traceID, _, spanID := gls.GetTraceInfo()
 	// dribble tracing id to downstream
 	md := metadata.Pairs("trace_id", traceID, "span_id", spanID)
 	mdOld, _ := metadata.FromIncomingContext(ctx)
@@ -75,6 +87,7 @@ func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.Una
 		pSpanID = arr[0]
 	}
 
+	// gls based on call stack
 	gls.SetGls(traceID, pSpanID, spanID, func() {
 		resp, err = _UnaryServerInterceptor(ctx, req, info, handler)
 	})
