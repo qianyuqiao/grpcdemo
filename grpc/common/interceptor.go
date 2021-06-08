@@ -25,8 +25,11 @@ func UnaryClientInterceptor(ctx context.Context, method string, req, reply inter
 
 	// start tracing
 	traceID, _, spanID := gls.GetTraceInfo()
-	if spanID == "" {
+	if spanID == "" { // 生产 root spanId
 		spanID = utils.GenerateSpanID(utils.GetLocalIP().String())
+		if traceID == "" {// 如果是root spanId，把他设置成traceId
+			traceID = spanID// trace 标识请求在整个系统里的链路视图, span则是在链路中不同服务内部的视图
+		}
 	}
 	gls.SetGls(traceID, "", spanID, func() { // make sure client request log contain spanId for tracing
 		err = _UnaryClientInterceptor(ctx, method, req, reply, cc, invoker, opts...)
@@ -60,7 +63,7 @@ func _UnaryClientInterceptor(ctx context.Context, method string, req, reply inte
 		var remoteServer string
 		if p.Addr != nil {
 			// 通过peer在拦截器里拿到请求对应的远端服务器的IP和端口号
-			// 对通过服务发现连接服务器的客户端的调试和记录非常有用。
+			// 对通过服务发现连接服务器的客户端调试和记录非常有用。
 			remoteServer=p.Addr.String()
 		}
 
