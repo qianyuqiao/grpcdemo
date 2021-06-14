@@ -27,6 +27,7 @@ func UnaryClientInterceptor(ctx context.Context, method string, req, reply inter
 	traceID, _, spanID := gls.GetTraceInfo()
 	if spanID == "" {
 		spanID = utils.GenerateSpanID(utils.GetLocalIP().String())
+		traceId = spanID
 	}
 	gls.SetGls(traceID, "", spanID, func() { // make sure client request log contain spanId for tracing
 		err = _UnaryClientInterceptor(ctx, method, req, reply, cc, invoker, opts...)
