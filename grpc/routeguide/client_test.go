@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestPing(t *testing.T) {
@@ -11,6 +12,8 @@ func TestPing(t *testing.T) {
 		ctx context.Context
 		in  *PingRequest
 	}
+	ctx, _ := context.WithTimeout(context.Background(), time.Second * 2)
+	valCtx := context.WithValue( ctx, "client-ip", "127.0.0.1")
 	tests := []struct {
 		name    string
 		args    args
@@ -20,7 +23,7 @@ func TestPing(t *testing.T) {
 		{
 			name: "test1",
 			args: args{
-				ctx: context.Background(),
+				ctx: valCtx,
 				in:  &PingRequest{},
 			},
 			want: &PingReply{
